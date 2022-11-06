@@ -2,10 +2,16 @@
 ScriptHost:LoadScript("scripts/ver.lua")
 
 -- Settings
--- ScriptHost:LoadScript("scripts/settings/settings.lua")
+ScriptHost:LoadScript("scripts/settings/settings.lua")
 
 -- Auto-Tracking
--- ScriptHost:LoadScript("scripts/tracking/autotracking.lua")
+ScriptHost:LoadScript("scripts/tracking/autotracking.lua")
+if (string.find(Tracker.ActiveVariantUID, "items_only")) then
+  ScriptHost:LoadScript("scripts/tracking/autotracking.lua")
+end
+if (string.find(Tracker.ActiveVariantUID, "shard_hunt")) then
+  ScriptHost:LoadScript("scripts/tracking/autotracking-sh.lua")
+end
 
 -- Items
 print("Loading Items")
@@ -54,11 +60,20 @@ if variant == "" then
   variant = "items_only"
 end
 
-print("Not a Map Variant; load default stuff")
--- Layout Defaults
-Tracker:AddLayouts("layouts/broadcast.json")
-Tracker:AddLayouts("layouts/tracker.json")
-print("")
+if variant == "items_only" then
+  print("Not a Map Variant; load default stuff")
+  -- Layout Defaults
+  Tracker:AddLayouts("layouts/broadcast.json")
+  Tracker:AddLayouts("layouts/tracker.json")
+  print("")
+end
+if variant == "shard_hunt" then
+  print("Loading Shard Hunt Variant")
+  -- Layout Defaults
+  Tracker:AddLayouts("layouts/broadcast-sh.json")
+  Tracker:AddLayouts("layouts/tracker-sh.json")
+  print("")
+end
 
 -- Legacy
 print("Satisfy Legacy Loads")

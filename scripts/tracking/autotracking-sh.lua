@@ -118,7 +118,7 @@ function updateSpellFromMemorySegment(segment)
     if AUTOTRACKER_ENABLE_ITEM_TRACKING then
         spell1 = ReadU8(segment, 0x7e1038)
         spell2 = ReadU8(segment, 0x7e1039)
-        if (spell1 & 0x80) > 0 then Tracker:FindObjectForCode("exit").Active = true else Tracker:FindObjectForCode("exit").Active = false end 
+        if (spell1 & 0x80) > 0 then Tracker:FindObjectForCode("exit").Active = true end 
         if (spell1 & 0x40) > 0 then Tracker:FindObjectForCode("cure").Active = true end
         if (spell1 & 0x20) > 0 then Tracker:FindObjectForCode("heal").Active = true end
         if (spell1 & 0x10) > 0 then Tracker:FindObjectForCode("life").Active = true end 
@@ -164,8 +164,25 @@ function updateItemFromMemorySegment(segment)
     end
 end
 
+function updateShardHuntFromMemorySegment(segment)
+    if not isInGame() then
+        return false
+    end
+
+    InvalidateReadCaches()
+
+    if AUTOTRACKER_ENABLE_ITEM_TRACKING then
+        shards = ReadU8(segment, 0x7e0e93)
+        print(shards)
+        print(SHARD_COUNT)
+        Tracker:FindObjectForCode(SHARD_COUNT).AcquiredCount = shards
+        
+    end
+end
+
 ScriptHost:AddMemoryWatch("FFMQ Weapon Data", 0x7e1032, 0x1F0, updateWeaponsFromMemorySegment)
 ScriptHost:AddMemoryWatch("FFMQ Armor Data", 0x7e1035, 0x280, updateArmorFromMemorySegment)
 ScriptHost:AddMemoryWatch("FFMQ Spell Data", 0x7e1038, 0x1F0, updateSpellFromMemorySegment)
 ScriptHost:AddMemoryWatch("FFMQ Item Data", 0x7e0EA6, 0x1FF, updateItemFromMemorySegment)
+ScriptHost:AddMemoryWatch("FFMQ Shard Hunt Data", 0x7e0e93, 0x01, updateShardHuntFromMemorySegment)
 
